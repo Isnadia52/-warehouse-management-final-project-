@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
             Route::resource('products', App\Http\Controllers\ProductController::class);
             // Transaction Management (Read & Approval Interface)
             Route::resource('transactions', App\Http\Controllers\TransactionController::class)->only(['index', 'show', 'update']);
+            Route::resource('restock_orders', App\Http\Controllers\RestockOrderController::class);
     });
 
     // Manager Dashboard & Rute
@@ -42,6 +43,7 @@ Route::middleware('auth')->group(function () {
             Route::resource('products', App\Http\Controllers\ProductController::class);
             // Transaction Management (Read & Approval Interface)
             Route::resource('transactions', App\Http\Controllers\TransactionController::class)->only(['index', 'show', 'update']);
+            Route::resource('restock_orders', App\Http\Controllers\RestockOrderController::class);
     });
 
     Route::prefix('staff')
@@ -66,6 +68,7 @@ Route::middleware('auth')->group(function () {
             return view('supplier.dashboard');
         })->name('supplier.dashboard');
         // Rute Supplier lainnya akan diletakkan di sini
+        Route::resource('restock_orders', App\Http\Controllers\RestockOrderController::class)->only(['index', 'show', 'update']);
     });
 });
 

@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class TransactionController extends Controller
 {
@@ -61,6 +62,8 @@ class TransactionController extends Controller
     {
         // Otorisasi: Hanya Staff
         Gate::authorize('create', Transaction::class);
+
+        // dd($request->all());
 
         // 1. Validasi Transaksi Utama (Header)
         $validatedHeader = $request->validate([
@@ -147,7 +150,64 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        //
+        // Otorisasi Policy: Hanya Admin dan Manager yang bisa meng-approve
+        Gate::authorize('approve', $transaction); 
+
+        $request->validate([
+            'action' => ['required', 'in:approve,reject'],
+        ]);
+
+        $action = $request->input('action');
+        $redirectRoute = auth()->user()->role . '.transactions.index';
+
+        if ($action === 'approve') {
+            // Logika Persetujuan
+            
+            // 1. Cek stok kritis (hanya untuk Outgoing yang di-approve)
+            if ($transaction->type === 'outgoing') {
+                foreach ($transaction->items as $item) {
+                    if ($item->quantity > $item->product->current_stock) {
+                        return back()->with('error', 'Approval failed: Product ' . $item->product->name . ' has insufficient stock.');
+                    }
+                }
+            }
+            
+            // 2. Update Stok (CORE LOGIC)
+            foreach ($transaction->items as $item) {
+                $product = $item->product;
+                
+                if ($transaction->type === 'incoming') {
+                    // Barang Masuk: Tambah Stok
+                    $product->increment('current_stock', $item->quantity);
+                } elseif ($transaction->type === 'outgoing') {
+                    // Barang Keluar: Kurangi Stok
+                    $product->decrement('current_stock', $item->quantity);
+                }
+            }
+            
+            // 3. Update Status Transaksi
+            $transaction->update([
+                'status' => 'Approved',
+                'manager_id' => auth()->id(), // Manager/Admin yang melakukan approval
+                'approved_at' => now(),
+            ]);
+
+            return redirect()->route($redirectRoute)
+                ->with('success', 'Transaction ' . $transaction->transaction_number . ' successfully approved. Stock updated.');
+            
+        } elseif ($action === 'reject') {
+            // Logika Penolakan (Tidak ada perubahan stok)
+            
+            $transaction->update([
+                'status' => 'Rejected',
+                'manager_id' => auth()->id(), 
+            ]);
+
+            return redirect()->route($redirectRoute)
+                ->with('success', 'Transaction ' . $transaction->transaction_number . ' has been rejected.');
+        }
+
+        return redirect()->route($redirectRoute);
     }
 
     /**
