@@ -25,6 +25,8 @@ Route::middleware('auth')->group(function () {
             
             // Product Management (CRUD Penuh)
             Route::resource('products', App\Http\Controllers\ProductController::class);
+            // Transaction Management (Read & Approval Interface)
+            Route::resource('transactions', App\Http\Controllers\TransactionController::class)->only(['index', 'show', 'update']);
     });
 
     // Manager Dashboard & Rute
@@ -38,6 +40,8 @@ Route::middleware('auth')->group(function () {
             
             // Product Management (CRUD Penuh)
             Route::resource('products', App\Http\Controllers\ProductController::class);
+            // Transaction Management (Read & Approval Interface)
+            Route::resource('transactions', App\Http\Controllers\TransactionController::class)->only(['index', 'show', 'update']);
     });
 
     Route::prefix('staff')
@@ -50,7 +54,7 @@ Route::middleware('auth')->group(function () {
             
             // Product List (Hanya Read: index & show)
             Route::resource('products', App\Http\Controllers\ProductController::class)->only(['index', 'show']);
-    });
+            Route::resource('transactions', App\Http\Controllers\TransactionController::class)->except(['edit', 'update', 'destroy']);    });
 
     // Supplier Dashboard & Rute
     Route::prefix('supplier')->middleware('role:supplier')->group(function () {

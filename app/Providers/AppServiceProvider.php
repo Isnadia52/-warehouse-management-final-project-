@@ -5,9 +5,11 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Gate; // Import Gate Facade untuk Policy
-use App\Models\Product; // Import Model Product
-use App\Policies\ProductPolicy; // Import Policy yang baru dibuat
+use Illuminate\Support\Facades\Gate;
+use App\Models\Product;
+use App\Policies\ProductPolicy;
+use App\Models\Transaction;
+use App\Policies\TransactionPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Product::class => ProductPolicy::class,
+        Transaction::class => TransactionPolicy::class,
     ];
 
     /**
