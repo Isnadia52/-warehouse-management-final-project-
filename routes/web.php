@@ -15,37 +15,43 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    // Rute Dashboard Utama (Untuk default atau fallback)
-    Route::get('/dashboard', function () {
-        // Karena kita sudah menangani redirect di controller, 
-        // rute ini hanya berfungsi sebagai default.
-        return view('dashboard'); 
-    })->name('dashboard');
-
-    // Admin Dashboard & Rute
-    Route::prefix('admin')->middleware('role:admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
-        // Rute Admin lainnya akan diletakkan di sini
+    Route::prefix('admin')
+        ->middleware('role:admin')
+        ->name('admin.') // <--- KOREKSI: Tambahkan Name Prefix
+        ->group(function () {
+            Route::get('/dashboard', function () {
+                return view('admin.dashboard');
+            })->name('dashboard');
+            
+            // Product Management (CRUD Penuh)
+            Route::resource('products', App\Http\Controllers\ProductController::class);
     });
 
     // Manager Dashboard & Rute
-    Route::prefix('manager')->middleware('role:manager')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('manager.dashboard');
-        })->name('manager.dashboard');
-        // Rute Manager lainnya akan diletakkan di sini
+    Route::prefix('manager')
+        ->middleware('role:manager')
+        ->name('manager.') // <--- KOREKSI: Tambahkan Name Prefix
+        ->group(function () {
+            Route::get('/dashboard', function () {
+                return view('manager.dashboard');
+            })->name('dashboard');
+            
+            // Product Management (CRUD Penuh)
+            Route::resource('products', App\Http\Controllers\ProductController::class);
     });
 
-    // Staff Dashboard & Rute
-    Route::prefix('staff')->middleware('role:staff')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('staff.dashboard');
-        })->name('staff.dashboard');
-        // Rute Staff lainnya akan diletakkan di sini
+    Route::prefix('staff')
+        ->middleware('role:staff')
+        ->name('staff.') // <--- KOREKSI: Tambahkan Name Prefix
+        ->group(function () {
+            Route::get('/dashboard', function () {
+                return view('staff.dashboard');
+            })->name('dashboard');
+            
+            // Product List (Hanya Read: index & show)
+            Route::resource('products', App\Http\Controllers\ProductController::class)->only(['index', 'show']);
     });
-    
+
     // Supplier Dashboard & Rute
     Route::prefix('supplier')->middleware('role:supplier')->group(function () {
         // Cek status approval di sini untuk menampilkan halaman pending

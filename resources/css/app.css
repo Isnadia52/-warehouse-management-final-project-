@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* resources/css/app.css */
+
+/* Tambahkan di bagian paling bawah */
+@layer components {
+    .neon-cyan {
+        --neon-color: #00FFFF; /* Electric Cyan */
+        --bg-color: rgba(18, 18, 18, 0.7); /* Dark Charcoal Transparant */
+    }
+}

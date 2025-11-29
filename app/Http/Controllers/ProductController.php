@@ -1,0 +1,109 @@
+<?php
+
+// File: app/Http/Controllers/ProductController.php
+
+namespace App\Http\Controllers;
+
+use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
+
+class ProductController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        // Otorisasi Policy
+        Gate::authorize('viewAny', Product::class);
+
+        // Ambil data produk
+        $products = Product::with('category')
+                            ->orderBy('current_stock', 'asc')
+                            ->paginate(10);
+                            
+        return view('products.index', compact('products'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        // Otorisasi Policy
+        Gate::authorize('create', Product::class);
+        
+        $categories = Category::all(); 
+        
+        return view('products.create', compact('categories'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        // Otorisasi Policy
+        Gate::authorize('create', Product::class);
+
+        // 1. Validasi Data
+        $validated = $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'sku' => ['required', 'string', 'max:255', 'unique:products,sku'],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'buy_price' => ['required', 'numeric', 'min:0'],
+            'sell_price' => ['required', 'numeric', 'min:0'],
+            'min_stock' => ['required', 'integer', 'min:1'],
+            'current_stock' => ['required', 'integer', 'min:0'],
+            'unit' => ['required', 'string', 'max:50'],
+            'rack_location' => ['nullable', 'string', 'max:100'],
+            // 'image' => ['nullable', 'image', 'max:2048'],
+        ]);
+        
+        // 2. Simpan Data
+        Product::create($validated);
+        
+        // 3. Redirect dan Notifikasi
+        $redirectRoute = auth()->user()->role . '.products.index'; 
+
+        return redirect()->route($redirectRoute)
+            ->with('success', 'Product ' . $validated['name'] . ' added successfully to Quantum Stockroom.');
+    }
+        
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Product $product)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Product $product)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Product $product)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Product $product)
+    {
+        //
+    }
+}
