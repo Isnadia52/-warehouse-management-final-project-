@@ -17,6 +17,8 @@ class RestockOrder extends Model
         'expected_delivery_date',
         'status', 
         'notes',
+        'supplier_rating',
+        'feedback_notes',
     ];
 
     public function items()

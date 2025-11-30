@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
             Route::resource('products', ProductController::class);
             Route::resource('categories', CategoryController::class)->except(['edit', 'update', 'show']);
             Route::resource('transactions', TransactionController::class)->except(['edit']);
+            Route::get('restock_orders/{restock_order}/rate', [App\Http\Controllers\RestockOrderController::class, 'rate'])->name('restock_orders.rate');
             Route::resource('restock_orders', RestockOrderController::class);
         });
 

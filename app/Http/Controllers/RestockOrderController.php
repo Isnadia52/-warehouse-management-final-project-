@@ -89,6 +89,24 @@ class RestockOrderController extends Controller
         return redirect()->route(auth()->user()->role . '.restock_orders.index')
             ->with('success', 'Purchase Order ' . $poNumber . ' created and sent to supplier.');
     }
+
+    /**
+     * Show the form for adding a rating (Hanya untuk Manager).
+     */
+    public function rate(RestockOrder $restock_order)
+    {
+        if (auth()->user()->role !== 'manager' || $restock_order->status !== 'Received') {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        // Memastikan rating belum diberikan
+        if ($restock_order->supplier_rating) {
+            return redirect()->route('manager.restock_orders.show', $restock_order)
+                ->with('error', 'Rating has already been submitted for this PO.');
+        }
+
+        return view('restock_orders.rate', compact('restock_order'));
+    }
     
     /**
      * Display the specified resource.
@@ -147,6 +165,22 @@ class RestockOrderController extends Controller
                 return redirect()->route($redirectRoute)
                     ->with('success', 'PO ' . $restock_order->po_number . ' marked as Received. Please inform Staff Gudang to create the Incoming Transaction.');
                     
+            }
+
+            if ($action === 'submit_rating' && $role === 'manager' && $restock_order->status === 'Received') {
+            
+            $request->validate([
+                'rating' => ['required', 'integer', 'min:1', 'max:5'],
+                'feedback' => ['nullable', 'string', 'max:500'],
+            ]);
+            
+            $restock_order->update([
+                'supplier_rating' => $request->rating,
+                'feedback_notes' => $request->feedback,
+            ]);
+            
+            return redirect()->route($redirectRoute)
+                ->with('success', 'Rating successfully submitted for PO ' . $restock_order->po_number);
             }
         }
 

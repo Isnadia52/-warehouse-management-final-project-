@@ -31,6 +31,26 @@
                     <p class="text-xl font-bold text-white">{{ $restock_order->expected_delivery_date ? \Carbon\Carbon::parse($restock_order->expected_delivery_date)->format('d M Y') : 'N/A' }}</p>
                 </div>
             </div>
+
+            {{-- MANAGER RATING INTERFACE --}}
+            @if (auth()->user()->role === 'manager')
+                @if ($restock_order->status === 'Received')
+                    @if ($restock_order->supplier_rating)
+                        <div class="p-4 rounded-lg border border-neon-green bg-neon-green/10 mb-6">
+                            <p class="text-white">Rating Submitted: <span class="font-bold text-xl">{{ $restock_order->supplier_rating }}/5</span></p>
+                            <p class="text-sm text-gray-400 mt-1">Notes: {{ $restock_order->feedback_notes }}</p>
+                        </div>
+                    @else
+                        <div class="mb-6 flex justify-end">
+                            <a href="{{ route('manager.restock_orders.rate', $restock_order) }}" class="bg-yellow-500 hover:bg-yellow-600 text-dark-charcoal font-bold py-2 px-4 rounded transition duration-300">
+                                Submit Supplier Rating
+                            </a>
+                        </div>
+                    @endif
+                @else
+                    <p class="text-yellow-300 mb-6">Rating becomes available when PO status is 'Received'.</p>
+                @endif
+            @endif
             
             <div class="mb-6">
                 <p class="text-xs uppercase text-electric-cyan">Current Status</p>
