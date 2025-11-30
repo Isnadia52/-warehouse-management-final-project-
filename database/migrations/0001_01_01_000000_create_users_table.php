@@ -15,9 +15,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             
-            // Kolom Tambahan Proyek
-            $table->enum('role', ['admin', 'manager', 'staff', 'supplier'])->default('staff'); // Tambahkan role
-            $table->boolean('is_approved')->default(true); // Tambahkan status approval
+            $table->enum('role', ['admin', 'manager', 'staff', 'supplier'])->default('staff');
+            $table->boolean('is_approved')->default(true);
 
             $table->rememberToken();
             $table->timestamps();

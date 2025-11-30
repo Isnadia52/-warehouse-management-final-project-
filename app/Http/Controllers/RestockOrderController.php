@@ -17,16 +17,13 @@ class RestockOrderController extends Controller
      */
     public function index()
     {
-        // Akses Penuh: Admin, Manager. Supplier hanya melihat order untuk dirinya.
         $role = auth()->user()->role;
 
         if ($role === 'supplier') {
-            // Supplier hanya melihat order yang ditujukan untuknya
             $orders = RestockOrder::where('supplier_id', auth()->id())
                                    ->orderBy('created_at', 'desc')
                                    ->paginate(15);
         } else {
-            // Admin/Manager melihat semua order
             $orders = RestockOrder::orderBy('created_at', 'desc')->paginate(15);
         }
         
@@ -38,7 +35,6 @@ class RestockOrderController extends Controller
      */
     public function create()
     {
-        // Otorisasi: Hanya Admin dan Manager
         if (!in_array(auth()->user()->role, ['admin', 'manager'])) {
             abort(403, 'Unauthorized action.');
         }
@@ -54,7 +50,6 @@ class RestockOrderController extends Controller
      */
     public function store(Request $request)
     {
-        // Otorisasi: Hanya Admin dan Manager
         if (!in_array(auth()->user()->role, ['admin', 'manager'])) {
             abort(403, 'Unauthorized action.');
         }
@@ -70,10 +65,8 @@ class RestockOrderController extends Controller
             'quantity.*' => ['required', 'integer', 'min:1'],
         ]);
         
-        // Logika PO Number (auto-generated)
         $poNumber = 'PO-' . Str::upper(Str::random(6)) . '-' . now()->format('Ym');
 
-        // 1. Simpan Restock Order (Status awal selalu 'Pending')
         $order = RestockOrder::create([
             'po_number' => $poNumber,
             'manager_id' => auth()->id(),
@@ -84,7 +77,6 @@ class RestockOrderController extends Controller
             'status' => 'Pending', 
         ]);
 
-        // 2. Simpan Order Items (Detail)
         $items = [];
         foreach ($request->product_id as $index => $productId) {
             $items[] = new \App\Models\RestockOrderItem([
@@ -98,14 +90,20 @@ class RestockOrderController extends Controller
             ->with('success', 'Purchase Order ' . $poNumber . ' created and sent to supplier.');
     }
     
-    // ... (fungsi show, update, destroy akan ditambahkan nanti)
-
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(RestockOrder $restock_order)
     {
-        //
+        $role = auth()->user()->role;
+        
+        if ($role === 'supplier' && $restock_order->supplier_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $restock_order->load('items.product', 'manager', 'supplier');
+        
+        return view('restock_orders.show', compact('restock_order'));
     }
 
     /**
@@ -125,19 +123,15 @@ class RestockOrderController extends Controller
         $action = $request->input('action');
         $redirectRoute = $role . '.restock_orders.index';
 
-        // 1. Otorisasi dan Validasi Aksi
-        
-        // Hanya Supplier yang bisa Confirm Pending Order
+
         if ($action === 'confirm' && $role === 'supplier' && $restock_order->status === 'Pending') {
             
-            // Validasi sederhana
             $request->validate(['action' => 'required']); 
             
             $restock_order->update(['status' => 'Confirmed by Supplier']);
             return redirect()->route($redirectRoute)
                 ->with('success', 'Purchase Order ' . $restock_order->po_number . ' confirmed. Awaiting shipment.');
 
-        // Hanya Manager/Admin yang bisa set In Transit atau Received
         } elseif (in_array($role, ['manager', 'admin'])) {
             
             if ($action === 'in_transit' && $restock_order->status === 'Confirmed by Supplier') {
@@ -147,9 +141,7 @@ class RestockOrderController extends Controller
                     
             } elseif ($action === 'received' && $restock_order->status === 'In Transit') {
                 
-                // PENTING: Order Received tidak langsung mengubah stok.
-                // Order Received hanya memberitahu Staff Gudang bahwa Barang Masuk harus dicatat.
-                
+
                 $restock_order->update(['status' => 'Received']);
                 
                 return redirect()->route($redirectRoute)
@@ -158,7 +150,6 @@ class RestockOrderController extends Controller
             }
         }
 
-        // Jika tidak ada aksi atau status tidak sesuai
         return back()->with('error', 'Update failed due to invalid action or current order status.');
     }
 

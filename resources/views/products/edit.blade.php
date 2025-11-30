@@ -1,16 +1,30 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-electric-cyan leading-tight">
-            {{ __('EDIT QUANTUM PRODUCT DATA') }} ({{ $product->name }})
+            <span class="inline-block overflow-hidden whitespace-nowrap border-r-4 border-electric-cyan animate-type-and-blink">
+                {{ __('EDIT QUANTUM PRODUCT: ') . $product->name }}
+            </span>
         </h2>
     </x-slot>
 
-    <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="quantum-card overflow-hidden shadow-xl sm:rounded-lg p-8" data-aos="fade-up">
+
+            {{-- ERROR HANDLING GLOBAL --}}
+            @if ($errors->any())
+                <div class="bg-neon-red/20 border border-neon-red text-white p-4 rounded mb-4">
+                    <h4 class="font-bold mb-2">Product Update Failed: Review Input Data</h4>
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             
             <form method="POST" action="{{ route(auth()->user()->role . '.products.update', $product) }}" enctype="multipart/form-data">
                 @csrf
-                @method('PUT') {{-- PENTING: Untuk aksi Update --}}
+                @method('PUT')
 
                 <h3 class="text-2xl font-bold text-neon-green mb-6 border-b border-gray-700 pb-3">Product Core Data</h3>
 
@@ -23,7 +37,8 @@
                     </div>
                     <div>
                         <x-input-label for="sku" :value="__('SKU (Stock Keeping Unit) - Unique')" class="text-electric-cyan" />
-                        <x-text-input id="sku" name="sku" type="text" class="mt-1 block w-full bg-gray-900 border-gray-700 text-white" :value="old('sku', $product->sku)" required />
+                        {{-- SKU DIBUAT READONLY agar tidak diubah --}}
+                        <x-text-input id="sku" name="sku" type="text" class="mt-1 block w-full bg-gray-700/50 text-white" :value="old('sku', $product->sku)" readonly />
                         <x-input-error class="mt-2" :messages="$errors->get('sku')" />
                     </div>
                 </div>
@@ -89,6 +104,21 @@
                     <x-input-label for="description" :value="__('Description')" class="text-electric-cyan" />
                     <textarea id="description" name="description" rows="3" class="mt-1 block w-full bg-gray-900 border-gray-700 text-white rounded-md shadow-sm">{{ old('description', $product->description) }}</textarea>
                     <x-input-error class="mt-2" :messages="$errors->get('description')" />
+                </div>
+
+                {{-- Image (optional) --}}
+                <div class="mb-6">
+                    <x-input-label for="image" :value="__('Replace Product Image (Max 2MB)')" class="text-electric-cyan" />
+                    
+                    @if ($product->image)
+                        <p class="text-sm text-gray-400 mt-2 mb-2">Current Image:</p>
+                        <img src="{{ asset('storage/' . $product->image) }}" alt="Current Product Image" class="w-24 h-24 object-cover rounded-md border border-gray-700 mb-4">
+                    @else
+                        <p class="text-sm text-yellow-300 mt-2 mb-2">No image currently uploaded.</p>
+                    @endif
+
+                    <input id="image" name="image" type="file" class="mt-1 block w-full text-white bg-gray-900 border-gray-700 rounded-md shadow-sm" />
+                    <x-input-error class="mt-2" :messages="$errors->get('image')" />
                 </div>
 
                 <div class="flex items-center justify-end mt-4">

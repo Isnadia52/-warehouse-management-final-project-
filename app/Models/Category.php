@@ -17,7 +17,6 @@ class Category extends Model
         'image',
     ];
 
-    // Relasi One-to-Many: Category has many Products
     public function products()
     {
         return $this->hasMany(Product::class);

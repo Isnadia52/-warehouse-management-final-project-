@@ -19,9 +19,7 @@ class RoleMiddleware
             return redirect('login'); 
         }
 
-        // Memeriksa peran user
         if ($request->user()->role !== $role) {
-            // Logika redirect eksplisit (karena RouteServiceProvider tidak dimodifikasi)
             $userRole = $request->user()->role;
             $redirectPath = match ($userRole) {
                 'admin' => '/admin/dashboard',

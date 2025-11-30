@@ -1,7 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Supplier Pending Dashboard') }}
+        <h2 class="font-semibold text-xl text-electric-cyan leading-tight">
+            <span class="inline-block overflow-hidden whitespace-nowrap border-r-4 border-electric-cyan animate-type-and-blink">
+                {{ __('SUPPLIER PENDING DASHBOARD') }}
+            </span>
         </h2>
     </x-slot>
 

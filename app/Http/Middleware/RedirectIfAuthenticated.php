@@ -21,9 +21,6 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                // KOREKSI: Kita akan mengarahkan ke Controller untuk cek peran.
-                // Untuk amannya, kita kembalikan ke RouteServiceProvider::HOME default
-                // karena logika role sudah kita tanam di AuthenticatedSessionController.
                 return redirect(RouteServiceProvider::HOME); 
             }
         }

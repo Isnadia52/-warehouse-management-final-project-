@@ -29,7 +29,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
         
-        // Logika Redireksi Kustom Berdasarkan Peran
         $user = $request->user();
         
         switch ($user->role) {
@@ -43,9 +42,8 @@ class AuthenticatedSessionController extends Controller
                 $redirectPath = '/staff/dashboard';
                 break;
             case 'supplier':
-                // Cek status approval supplier
                 if (!$user->is_approved) {
-                    $redirectPath = '/supplier/dashboard'; // Kita akan tangani view pending di rute ini
+                    $redirectPath = '/supplier/dashboard'; 
                 } else {
                     $redirectPath = '/supplier/dashboard';
                 }

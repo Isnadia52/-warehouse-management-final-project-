@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('transaction_id')->constrained('transactions')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('restrict');
             $table->integer('quantity');
-            $table->decimal('unit_price', 10, 2); // Harga saat transaksi terjadi (sell_price atau buy_price)
+            $table->decimal('unit_price', 10, 2);
             $table->timestamps();
             
             $table->unique(['transaction_id', 'product_id']);

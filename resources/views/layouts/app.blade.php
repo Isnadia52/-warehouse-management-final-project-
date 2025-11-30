@@ -15,26 +15,21 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-       /* CSS Kustom untuk Glassmorphism & Neon */
         .quantum-card {
-            /* 1. Warna Card: Dark Gray Semi-Transparan (#1A1A1A / 0.7) */
             background-color: rgba(26, 26, 26, 0.7); 
-            backdrop-filter: blur(10px); /* Tingkatkan blur sedikit untuk kesan kaca */
+            backdrop-filter: blur(10px);
             
-            /* 2. Border & Glow Electric Cyan */
-            border: 1px solid #00FFFF; /* Electric Cyan Border */
+            border: 1px solid #00FFFF; 
             
-            /* Box Shadow (Aura luar) + Inset Shadow (Aura dalam) */
             box-shadow: 
-                0 0 12px rgba(0, 255, 255, 0.6), /* Outer Glow */
-                inset 0 0 5px rgba(0, 255, 255, 0.3); /* Inner Glow */
+                0 0 12px rgba(0, 255, 255, 0.6),
+                inset 0 0 5px rgba(0, 255, 255, 0.3);
         }
 
-        /* Efek Hover (Opsional, untuk sentuhan Parallax/Kedalaman) */
         .quantum-card:hover {
-            transform: perspective(1000px) rotateX(1deg) rotateY(1deg); /* Parallax Effect minimal */
+            transform: perspective(1000px) rotateX(1deg) rotateY(1deg);
             box-shadow: 
-                0 0 20px rgba(0, 255, 255, 0.8), /* Intensitas Glow meningkat saat hover */
+                0 0 20px rgba(0, 255, 255, 0.8), 
                 inset 0 0 8px rgba(0, 255, 255, 0.5); 
             transition: all 0.3s ease-in-out;
         }
@@ -62,8 +57,8 @@
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
       AOS.init({
-          duration: 800, // Durasi Animasi
-          once: true,    // Hanya animasikan saat pertama kali muncul
+          duration: 800,
+          once: true,   
       });
     </script>
 </body>

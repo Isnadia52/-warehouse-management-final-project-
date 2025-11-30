@@ -18,7 +18,6 @@ class ProductSeeder extends Seeder
         $kantorId = DB::table('categories')->where('name', 'Aksesoris Kantor')->value('id');
         
         DB::table('products')->insert([
-            // Produk 1: Stok Aman
             [
                 'category_id' => $elektronikId,
                 'sku' => 'SKU-EL001',
@@ -27,12 +26,12 @@ class ProductSeeder extends Seeder
                 'buy_price' => 150000.00,
                 'sell_price' => 225000.00,
                 'min_stock' => 5,
-                'current_stock' => 120, // Stok Aman
+                'current_stock' => 120, 
                 'unit' => 'pcs',
                 'rack_location' => 'A-01-B',
                 'created_at' => now(), 'updated_at' => now(),
             ],
-            // Produk 2: Low Stock Alert (Low Stock harus berwarna Neon Red)
+
             [
                 'category_id' => $perkakasId,
                 'sku' => 'SKU-PRK002',
@@ -41,12 +40,12 @@ class ProductSeeder extends Seeder
                 'buy_price' => 45000.00,
                 'sell_price' => 79000.00,
                 'min_stock' => 10,
-                'current_stock' => 3, // Low Stock (< 10)
+                'current_stock' => 3,
                 'unit' => 'set',
                 'rack_location' => 'C-15-A',
                 'created_at' => now(), 'updated_at' => now(),
             ],
-            // Produk 3: Stok Aman
+
             [
                 'category_id' => $kantorId,
                 'sku' => 'SKU-KNT003',

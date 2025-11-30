@@ -1,12 +1,26 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-electric-cyan leading-tight">
-            {{ __('ADD NEW QUANTUM PRODUCT') }}
+            <span class="inline-block overflow-hidden whitespace-nowrap border-r-4 border-electric-cyan animate-type-and-blink">
+                {{ __('ADD NEW QUANTUM PRODUCT') }}
+            </span>
         </h2>
     </x-slot>
 
-    <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="quantum-card overflow-hidden shadow-xl sm:rounded-lg p-8" data-aos="fade-up">
+            
+            {{-- ERROR HANDLING GLOBAL --}}
+            @if ($errors->any())
+                <div class="bg-neon-red/20 border border-neon-red text-white p-4 rounded mb-4">
+                    <h4 class="font-bold mb-2">Product Encoding Failed: Review Input Data</h4>
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             
             <form method="POST" action="{{ route(auth()->user()->role . '.products.store') }}" enctype="multipart/form-data">
                 @csrf
@@ -50,7 +64,7 @@
 
                 <h3 class="text-2xl font-bold text-neon-green mb-6 border-b border-gray-700 pb-3 mt-8">Stock & Pricing</h3>
 
-                {{-- Baris 3: Prices --}}
+                {{-- Baris 3: Prices (DIPULIHKAN) --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <x-input-label for="buy_price" :value="__('Buy Price (Rp)')" class="text-electric-cyan" />
@@ -64,7 +78,7 @@
                     </div>
                 </div>
 
-                {{-- Baris 4: Stock Levels --}}
+                {{-- Baris 4: Stock Levels (DIPULIHKAN) --}}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div>
                         <x-input-label for="current_stock" :value="__('Initial Stock Level')" class="text-electric-cyan" />
@@ -91,11 +105,11 @@
                 </div>
 
                 {{-- Image (optional) --}}
-                {{-- <div class="mb-6">
-                    <x-input-label for="image" :value="__('Product Image')" class="text-electric-cyan" />
-                    <input id="image" name="image" type="file" class="mt-1 block w-full text-white" />
+                <div class="mb-6">
+                    <x-input-label for="image" :value="__('Product Image (Max 2MB)')" class="text-electric-cyan" />
+                    <input id="image" name="image" type="file" class="mt-1 block w-full text-white bg-gray-900 border-gray-700 rounded-md shadow-sm" />
                     <x-input-error class="mt-2" :messages="$errors->get('image')" />
-                </div> --}}
+                </div>
 
                 <div class="flex items-center justify-end mt-4">
                     <a href="{{ route(auth()->user()->role . '.products.index') }}" class="text-gray-400 hover:text-white mr-4 transition duration-300">

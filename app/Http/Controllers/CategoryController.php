@@ -13,7 +13,6 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        // Otorisasi: Hanya Admin dan Manager
         if (!in_array(auth()->user()->role, ['admin', 'manager'])) {
             abort(403, 'Unauthorized action.');
         }
@@ -46,7 +45,6 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
             'description' => ['nullable', 'string'],
-            // 'image' => ['nullable', 'image', 'max:2048'],
         ]);
         
         Category::create($validated);
@@ -55,7 +53,6 @@ class CategoryController extends Controller
             ->with('success', 'Category "' . $validated['name'] . '" added successfully.');
     }
 
-    // Fungsi show dan edit/update diabaikan karena fokus pada list, create, dan delete
     public function show(Category $category)
     {
         abort(404);
@@ -78,7 +75,6 @@ class CategoryController extends Controller
             abort(403, 'Unauthorized action.');
         }
         
-        // Validasi: Tidak bisa menghapus kategori yang masih memiliki produk
         if ($category->products()->count() > 0) {
              return back()->with('error', 'Cannot delete category "' . $category->name . '" because it still contains ' . $category->products()->count() . ' products.');
         }

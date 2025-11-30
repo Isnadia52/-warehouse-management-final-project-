@@ -1,11 +1,10 @@
 @php
-    // Definisikan rute dashboard berdasarkan peran pengguna
     $dashboardRoute = match (auth()->user()->role) {
         'admin' => 'admin.dashboard',
         'manager' => 'manager.dashboard',
         'staff' => 'staff.dashboard',
         'supplier' => 'supplier.dashboard',
-        default => 'dashboard', // Fallback, seharusnya tidak tercapai
+        default => 'dashboard',
     };
 @endphp
 
@@ -27,14 +26,33 @@
                         {{ strtoupper(auth()->user()->role) }} DASHBOARD
                     </x-nav-link>
 
-                    {{-- Link Product Management (Visible for Admin, Manager, Staff) --}}
+                    {{-- Link Product Management (Admin, Manager, Staff) --}}
                     @can('viewAny', App\Models\Product::class)
                         <x-nav-link :href="route(auth()->user()->role . '.products.index')" :active="request()->routeIs(auth()->user()->role . '.products.index')">
                             {{ __('Product Management') }}
                         </x-nav-link>
                     @endcan
                     
-                    {{-- Di sini tempat kita akan menambahkan link untuk modul lain di masa depan --}}
+                    {{-- Link Category Management (Admin, Manager) --}}
+                    @if (in_array(auth()->user()->role, ['admin', 'manager']))
+                        <x-nav-link :href="route(auth()->user()->role . '.categories.index')" :active="request()->routeIs(auth()->user()->role . '.categories.index')">
+                            {{ __('Category Control') }}
+                        </x-nav-link>
+                    @endif
+                    
+                    {{-- Link Transaction Logs (Admin, Manager, Staff) --}}
+                    @can('viewAny', App\Models\Transaction::class)
+                        <x-nav-link :href="route(auth()->user()->role . '.transactions.index')" :active="request()->routeIs(auth()->user()->role . '.transactions.index')">
+                            {{ __('Transaction Logs') }}
+                        </x-nav-link>
+                    @endcan
+
+                    {{-- Link Restock Orders (Admin, Manager, Supplier) --}}
+                    @if (in_array(auth()->user()->role, ['admin', 'manager', 'supplier']))
+                        <x-nav-link :href="route(auth()->user()->role . '.restock_orders.index')" :active="request()->routeIs(auth()->user()->role . '.restock_orders.index')">
+                            {{ __('Restock Orders') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 

@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::create('restock_orders', function (Blueprint $table) {
             $table->id();
-            $table->string('po_number')->unique(); // Purchase Order Number - Auto Generated [cite: 745]
+            $table->string('po_number')->unique();
             $table->foreignId('supplier_id')->constrained('users')->onDelete('restrict');
             $table->foreignId('manager_id')->constrained('users')->onDelete('restrict');
             $table->date('order_date');

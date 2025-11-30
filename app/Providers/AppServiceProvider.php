@@ -13,9 +13,8 @@ use App\Policies\TransactionPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Daftarkan Policy di sini (Global Authorization).
-     */
+
+
     protected $policies = [
         Product::class => ProductPolicy::class,
         Transaction::class => TransactionPolicy::class,
@@ -34,7 +33,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Pendaftaran Policy secara manual di Laravel 11
         foreach ($this->policies as $model => $policy) {
             Gate::policy($model, $policy);
         }

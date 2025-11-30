@@ -1,7 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-electric-cyan leading-tight">
-            {{ __('PURCHASE ORDER MANAGEMENT') }}
+            <span class="inline-block overflow-hidden whitespace-nowrap border-r-4 border-electric-cyan animate-type-and-blink">
+                {{ __('PURCHASE ORDER MANAGEMENT') }}
+            </span>
         </h2>
     </x-slot>
 
@@ -69,7 +71,7 @@
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-center space-x-2 flex justify-center">
-                                    <a href="#" class="font-medium text-electric-cyan hover:underline">View Detail</a>
+                                    <a href="{{ route(auth()->user()->role . '.restock_orders.show', $order) }}" class="font-medium text-electric-cyan hover:underline">View Detail</a>
                                     
                                     @php
                                         $isManagerOrAdmin = in_array(auth()->user()->role, ['manager', 'admin']);

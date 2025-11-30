@@ -1,9 +1,11 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-electric-cyan leading-tight">
+<x-slot name="header">
+    <h2 class="font-semibold text-xl text-electric-cyan leading-tight">
+        <span class="inline-block overflow-hidden whitespace-nowrap border-r-4 border-electric-cyan animate-type-and-blink">
             {{ __('CREATE PURCHASE ORDER (PO)') }}
-        </h2>
-    </x-slot>
+        </span>
+    </h2>
+</x-slot>
 
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="quantum-card overflow-hidden shadow-xl sm:rounded-lg p-8" data-aos="fade-up">

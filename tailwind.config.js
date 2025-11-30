@@ -4,7 +4,7 @@ import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-    darkMode: 'class', // Pastikan dark mode aktif
+    darkMode: 'class', 
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
@@ -14,30 +14,27 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', ...defaultTheme.fontFamily.sans], // Menggunakan Inter atau Montserrat/Poppins jika Anda suka
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
             },
-            // --- Palet Warna Quantum Stockroom ---
             colors: {
-                // Warna Dasar Dark Mode
-                'dark-charcoal': '#121212', // Latar Belakang Paling Gelap (Navy Blue/Dark Charcoal)
-                'electric-cyan': '#00FFFF', // Aksen Primer (Neon Green/Cyan)
-                'neon-red': '#FF3131',      // Aksen Peringatan (Stok Rendah)
-                'neon-green': '#39FF14',    // Aksen Persetujuan/Success
+                'dark-charcoal': '#121212', 
+                'electric-cyan': '#00FFFF', 
+                'neon-red': '#FF3131',      
+                'neon-green': '#39FF14',    
             },
-            // --- Animasi Custom ---
             keyframes: {
-                'typing-cursor': { // Animasi Cursor Berkedip
-                    '0%, 100%': { opacity: '1' },
-                    '50%': { opacity: '0' },
+                'typing-cursor': { 
+                    '0%, 100%': { borderRightColor: 'transparent' },
+                    '50%': { borderRightColor: '#00FFFF' }, 
                 },
-                'text-reveal': { // Animasi Ketik (Typing)
+                'text-reveal': { 
                     '0%': { width: '0' },
                     '100%': { width: '100%' },
                 }
             },
             animation: {
-                'cursor-blink': 'typing-cursor 0.7s infinite',
-                'text-type': 'text-reveal 2s steps(40, end) forwards', // Sesuaikan durasi dan steps
+
+                'type-and-blink': 'text-reveal 1.5s steps(30, end) forwards, typing-cursor 0.5s step-end infinite alternate',
             },
         },
     },

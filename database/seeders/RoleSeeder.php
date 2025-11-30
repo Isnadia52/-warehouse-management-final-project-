@@ -14,7 +14,6 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Admin - Akses penuh
         DB::table('users')->insert([
             'name' => 'Admin Gudang',
             'email' => 'admin@gudang.com',
@@ -25,7 +24,6 @@ class RoleSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 2. Warehouse Manager - Verifikasi & Restock
         DB::table('users')->insert([
             'name' => 'Manager Kontrol',
             'email' => 'manager@gudang.com',
@@ -36,7 +34,6 @@ class RoleSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 3. Staff Gudang - Pencatat Transaksi
         DB::table('users')->insert([
             'name' => 'Staff Lapangan',
             'email' => 'staff@gudang.com',
@@ -47,7 +44,6 @@ class RoleSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 4. Supplier - Perlu Approval (Kita set default true dulu untuk kemudahan tes)
         DB::table('users')->insert([
             'name' => 'Supplier Utama',
             'email' => 'supplier@gudang.com',

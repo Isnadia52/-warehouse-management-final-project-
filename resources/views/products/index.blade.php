@@ -55,19 +55,26 @@
                                     @endif
                                 </td>
                                 <td class="py-4 px-6 flex justify-center space-x-2">
-                                    @can('update', $product)
-                                        <a href="{{ route(auth()->user()->role . '.products.edit', $product) }}" class="font-medium text-electric-cyan hover:underline">Edit</a>
-                                    @endcan
-                                    @can('delete', $product)
-                                        <form method="POST" action="{{ route(auth()->user()->role . '.products.destroy', $product) }}" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="font-medium text-neon-red hover:underline" onclick="return confirm('Are you sure?')">Delete</button>
-                                        </form>
-                                    @endcan
-                                    {{-- Staff hanya melihat detail (show) --}}
+    
+                                    {{-- Aksi EDIT dan DELETE (Hanya untuk Admin/Manager) --}}
+                                    @if (in_array(auth()->user()->role, ['admin', 'manager']))
+                                        @can('update', $product)
+                                            <a href="{{ route(auth()->user()->role . '.products.edit', $product) }}" class="font-medium text-electric-cyan hover:underline">Edit</a>
+                                        @endcan
+                                        @can('delete', $product)
+                                            <form method="POST" action="{{ route(auth()->user()->role . '.products.destroy', $product) }}" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="font-medium text-neon-red hover:underline" onclick="return confirm('Are you sure?')">Delete</button>
+                                            </form>
+                                        @endcan
+                                    @endif
+                                    
+                                    {{-- Tombol VIEW (Untuk semua role, tapi Staff Wajib) --}}
                                     @can('view', $product)
-                                        @if (auth()->user()->role === 'staff')
+                                        @if (in_array(auth()->user()->role, ['admin', 'manager']))
+                                            <a href="{{ route(auth()->user()->role . '.products.show', $product) }}" class="font-medium text-yellow-300 hover:underline">Detail</a>
+                                        @elseif (auth()->user()->role === 'staff')
                                             <a href="{{ route(auth()->user()->role . '.products.show', $product) }}" class="font-medium text-gray-400 hover:underline">View</a>
                                         @endif
                                     @endcan
