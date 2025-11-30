@@ -119,9 +119,47 @@ class RestockOrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, RestockOrder $restock_order)
     {
-        //
+        $role = auth()->user()->role;
+        $action = $request->input('action');
+        $redirectRoute = $role . '.restock_orders.index';
+
+        // 1. Otorisasi dan Validasi Aksi
+        
+        // Hanya Supplier yang bisa Confirm Pending Order
+        if ($action === 'confirm' && $role === 'supplier' && $restock_order->status === 'Pending') {
+            
+            // Validasi sederhana
+            $request->validate(['action' => 'required']); 
+            
+            $restock_order->update(['status' => 'Confirmed by Supplier']);
+            return redirect()->route($redirectRoute)
+                ->with('success', 'Purchase Order ' . $restock_order->po_number . ' confirmed. Awaiting shipment.');
+
+        // Hanya Manager/Admin yang bisa set In Transit atau Received
+        } elseif (in_array($role, ['manager', 'admin'])) {
+            
+            if ($action === 'in_transit' && $restock_order->status === 'Confirmed by Supplier') {
+                $restock_order->update(['status' => 'In Transit']);
+                return redirect()->route($redirectRoute)
+                    ->with('success', 'PO ' . $restock_order->po_number . ' updated to In Transit.');
+                    
+            } elseif ($action === 'received' && $restock_order->status === 'In Transit') {
+                
+                // PENTING: Order Received tidak langsung mengubah stok.
+                // Order Received hanya memberitahu Staff Gudang bahwa Barang Masuk harus dicatat.
+                
+                $restock_order->update(['status' => 'Received']);
+                
+                return redirect()->route($redirectRoute)
+                    ->with('success', 'PO ' . $restock_order->po_number . ' marked as Received. Please inform Staff Gudang to create the Incoming Transaction.');
+                    
+            }
+        }
+
+        // Jika tidak ada aksi atau status tidak sesuai
+        return back()->with('error', 'Update failed due to invalid action or current order status.');
     }
 
     /**

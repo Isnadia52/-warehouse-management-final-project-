@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
             // Transaction Management (Read & Approval Interface)
             Route::resource('transactions', App\Http\Controllers\TransactionController::class)->only(['index', 'show', 'update']);
             Route::resource('restock_orders', App\Http\Controllers\RestockOrderController::class);
+            Route::resource('categories', App\Http\Controllers\CategoryController::class)->except(['edit', 'update', 'show']);
     });
 
     // Manager Dashboard & Rute
@@ -44,6 +45,7 @@ Route::middleware('auth')->group(function () {
             // Transaction Management (Read & Approval Interface)
             Route::resource('transactions', App\Http\Controllers\TransactionController::class)->only(['index', 'show', 'update']);
             Route::resource('restock_orders', App\Http\Controllers\RestockOrderController::class);
+            Route::resource('categories', App\Http\Controllers\CategoryController::class)->except(['edit', 'update', 'show']);
     });
 
     Route::prefix('staff')
@@ -59,16 +61,21 @@ Route::middleware('auth')->group(function () {
             Route::resource('transactions', App\Http\Controllers\TransactionController::class)->except(['edit', 'update', 'destroy']);    });
 
     // Supplier Dashboard & Rute
-    Route::prefix('supplier')->middleware('role:supplier')->group(function () {
-        // Cek status approval di sini untuk menampilkan halaman pending
-        Route::get('/dashboard', function () {
-            if (!auth()->user()->is_approved) {
-                return view('supplier.pending');
-            }
-            return view('supplier.dashboard');
-        })->name('supplier.dashboard');
-        // Rute Supplier lainnya akan diletakkan di sini
-        Route::resource('restock_orders', App\Http\Controllers\RestockOrderController::class)->only(['index', 'show', 'update']);
+    Route::prefix('supplier')
+        ->middleware('role:supplier')
+        ->name('supplier.') // <--- PENTING: Name Prefix di sini!
+        ->group(function () {
+            // Cek status approval di sini untuk menampilkan halaman pending
+            Route::get('/dashboard', function () {
+                if (!auth()->user()->is_approved) {
+                    return view('supplier.pending');
+                }
+                return view('supplier.dashboard');
+            })->name('dashboard');
+            
+            // Restock Management (Read & Update Status)
+            // Jika Route::resource tidak memiliki ->names(), maka nama rute akan menjadi supplier.restock_orders.update
+            Route::resource('restock_orders', App\Http\Controllers\RestockOrderController::class)->only(['index', 'show', 'update']);
     });
 });
 

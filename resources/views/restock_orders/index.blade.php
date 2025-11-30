@@ -71,14 +71,37 @@
                                 <td class="py-4 px-6 text-center space-x-2 flex justify-center">
                                     <a href="#" class="font-medium text-electric-cyan hover:underline">View Detail</a>
                                     
-                                    {{-- Tombol Aksi Supplier --}}
+                                    @php
+                                        $isManagerOrAdmin = in_array(auth()->user()->role, ['manager', 'admin']);
+                                    @endphp
+
+                                    {{-- Aksi SUPPLIER (Confirm) --}}
                                     @if ($order->status === 'Pending' && auth()->user()->role === 'supplier')
-                                        <form method="POST" action="{{ route('supplier.restock_orders.update', $order) }}" class="inline">
+                                        <form method="POST" action="{{ route(auth()->user()->role . '.restock_orders.update', $order) }}" class="inline">
                                             @csrf
                                             @method('PUT')
                                             <input type="hidden" name="action" value="confirm">
-                                            <button type="submit" class="font-medium text-neon-green hover:underline" onclick="return confirm('Confirm receipt of this Purchase Order?')">Confirm</button>
+                                            <button type="submit" class="font-medium text-neon-green hover:underline" onclick="return confirm('Secure Confirmation: Do you confirm this Purchase Order?')">Confirm</button>
                                         </form>
+                                    @endif
+
+                                    {{-- Aksi MANAGER / ADMIN --}}
+                                    @if ($isManagerOrAdmin)
+                                        @if ($order->status === 'Confirmed by Supplier')
+                                            <form method="POST" action="{{ route(auth()->user()->role . '.restock_orders.update', $order) }}" class="inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="action" value="in_transit">
+                                                <button type="submit" class="font-medium text-blue-300 hover:underline" onclick="return confirm('Update status to In Transit?')">In Transit</button>
+                                            </form>
+                                        @elseif ($order->status === 'In Transit')
+                                            <form method="POST" action="{{ route(auth()->user()->role . '.restock_orders.update', $order) }}" class="inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="action" value="received">
+                                                <button type="submit" class="font-medium text-neon-green hover:underline" onclick="return confirm('Final Confirmation: Mark as RECEIVED? This alerts Staff.')">Received</button>
+                                            </form>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>
