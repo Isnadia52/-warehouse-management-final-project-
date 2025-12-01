@@ -1,13 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-electric-cyan leading-tight">
-            {{ __('CATEGORY CONTROL CENTER') }}
+            <span class="inline-block overflow-hidden whitespace-nowrap border-r-4 border-electric-cyan animate-type-and-blink">
+                {{ __('CATEGORY CONTROL CENTER') }}
+            </span>
         </h2>
     </x-slot>
 
-    <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="quantum-card overflow-hidden shadow-xl sm:rounded-lg p-6">
             
+            {{-- Notifikasi --}}
             @if (session('success'))
                 <div class="bg-neon-green/20 border border-neon-green text-white p-4 rounded mb-4" data-aos="fade-down">
                     {{ session('success') }}
@@ -27,39 +30,62 @@
                 </a>
             </div>
 
-            <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
-                <table class="w-full text-sm text-left text-gray-400">
-                    <thead class="text-xs uppercase bg-gray-900 text-electric-cyan">
-                        <tr>
-                            <th scope="col" class="py-3 px-6">Name</th>
-                            <th scope="col" class="py-3 px-6">Description</th>
-                            <th scope="col" class="py-3 px-6 text-center">Total Products</th>
-                            <th scope="col" class="py-3 px-6 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($categories as $category)
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition duration-150" data-aos="fade-up" data-aos-delay="50">
-                                <th scope="row" class="py-4 px-6 font-medium whitespace-nowrap text-white">
-                                    {{ $category->name }}
-                                </th>
-                                <td class="py-4 px-6">{{ Str::limit($category->description, 50) }}</td>
-                                <td class="py-4 px-6 text-center text-electric-cyan">{{ $category->products_count }}</td>
-                                <td class="py-4 px-6 text-center">
-                                    <form method="POST" action="{{ route(auth()->user()->role . '.categories.destroy', $category) }}" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="font-medium text-neon-red hover:underline" onclick="return confirm('WARNING: Are you sure you want to delete this category?')">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="py-4 px-6 text-center text-gray-500">No categories found.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            {{-- GRID CARD VIEW --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                @forelse ($categories as $category)
+                    {{-- Setiap kartu dibungkus oleh tautan <a> untuk menuju halaman detail --}}
+                    <a href="{{ route(auth()->user()->role . '.categories.show', $category) }}" 
+                        class="quantum-card p-4 rounded-lg flex flex-col justify-between hover:scale-105 transition duration-300 no-underline text-white relative group" 
+                        data-aos="fade-up" data-aos-delay="50">
+                        
+                        {{-- Konten Kartu Utama --}}
+                        <div>
+                            <div class="flex items-start mb-4">
+                                {{-- ICON / GAMBAR KATEGORI --}}
+                                <div class="mr-4 mt-1">
+                                    @if ($category->image)
+                                        <img src="{{ asset('storage/' . $category->image) }}" alt="Category Icon" class="w-12 h-12 object-cover rounded-md border border-electric-cyan" />
+                                    @else
+                                        <div class="w-12 h-12 flex items-center justify-center bg-gray-900 border border-gray-700 rounded-md">
+                                            <i class="fas fa-box text-electric-cyan text-2xl"></i>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                {{-- NAMA DAN DESKRIPSI --}}
+                                <div>
+                                    <h4 class="text-lg font-bold text-white group-hover:text-electric-cyan transition">{{ $category->name }}</h4>
+                                    <p class="text-xs text-gray-400 mt-1">{{ Str::limit($category->description, 30) }}</p>
+                                </div>
+                            </div>
+
+                            {{-- STATISTIK PRODUK --}}
+                            <div class="border-t border-gray-700 pt-3">
+                                <p class="text-sm uppercase text-electric-cyan">Total Products</p>
+                                <p class="text-3xl font-extrabold text-neon-green mt-1">{{ $category->products_count }}</p>
+                            </div>
+                        </div>
+
+                        {{-- TOMBOL DELETE (Diposisikan ABSOLUTE agar tidak termasuk dalam tautan utama) --}}
+                        <div class="absolute top-4 right-4 z-100"> 
+                            <form method="POST" action="{{ route(auth()->user()->role . '.categories.destroy', $category) }}" 
+                                class="inline" 
+                                onclick="event.stopPropagation();"> {{-- Mencegah klik tombol delete membuka halaman detail --}}
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" 
+                                        class="text-neon-red hover:text-red-400 text-lg p-1 rounded-full bg-gray-900/70" 
+                                        onclick="return confirm('WARNING: Are you sure you want to delete this category?')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </a>
+                @empty
+                    <div class="col-span-4 p-6 text-center text-gray-500">
+                        No categories found. Click 'Add New Category' to start encoding data.
+                    </div>
+                @endforelse
             </div>
 
             <div class="mt-6">

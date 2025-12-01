@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -45,7 +46,14 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
             'description' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'max:2048'],
+            
         ]);
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('category_images', 'public'); // Folder baru
+            $validated['image'] = $path;
+        }
         
         Category::create($validated);
         
@@ -55,7 +63,14 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
-        abort(404);
+        if (!in_array(auth()->user()->role, ['admin', 'manager'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Memuat semua produk yang terkait dengan kategori ini
+        $products = $category->products()->paginate(10);
+        
+        return view('categories.show', compact('category', 'products'));
     }
     public function edit(Category $category)
     {
