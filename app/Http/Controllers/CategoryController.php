@@ -63,19 +63,24 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
-        if (!in_array(auth()->user()->role, ['admin', 'manager'])) {
-            abort(403, 'Unauthorized action.');
-        }
 
-        // Memuat semua produk yang terkait dengan kategori ini
+        if (!in_array(auth()->user()->role, ['admin', 'manager'])) {
+            abort(403, 'Unauthorized action. You do not have permission to view this category detail.');
+        }
+ 
+        $category->loadCount('products'); 
+
         $products = $category->products()->paginate(10);
         
-        return view('categories.show', compact('category', 'products'));
-    }
+        return view('categories.show', compact('category', 'products'));    }
+
+
     public function edit(Category $category)
     {
         abort(404);
     }
+
+
     public function update(Request $request, Category $category)
     {
         abort(403);
@@ -89,9 +94,12 @@ class CategoryController extends Controller
         if (!in_array(auth()->user()->role, ['admin', 'manager'])) {
             abort(403, 'Unauthorized action.');
         }
-        
-        if ($category->products()->count() > 0) {
-             return back()->with('error', 'Cannot delete category "' . $category->name . '" because it still contains ' . $category->products()->count() . ' products.');
+
+
+        $category->loadCount('products'); 
+
+        if ($category->products_count > 0) { 
+            return back()->with('error', '🚫 Category "' . $category->name . '" cannot be deleted because it still contains ' . $category->products_count . ' products. Please move or delete the associated products first.');
         }
 
         $categoryName = $category->name;

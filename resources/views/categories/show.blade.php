@@ -10,7 +10,18 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="quantum-card overflow-hidden shadow-xl sm:rounded-lg p-8 relative" data-aos="fade-up">
 
-            {{-- BEAUTIFUL DELETE BUTTON di atas telah DIHAPUS --}}
+            {{-- Notifikasi --}}
+            @if (session('success'))
+                <div class="bg-neon-green/20 border border-neon-green text-white p-4 rounded mb-4" data-aos="fade-down">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if (session('error'))
+                {{-- Notifikasi ERROR/RESTRICT ditampilkan di sini --}}
+                <div class="bg-neon-red/20 border border-neon-red text-white p-4 rounded mb-4" data-aos="fade-down">
+                    {{ session('error') }}
+                </div>
+            @endif
             
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 
@@ -33,6 +44,7 @@
                     <div class="grid grid-cols-2 gap-4 text-gray-300 mb-6">
                         <div>
                             <p class="text-xs uppercase text-electric-cyan">Total Products</p>
+                            {{-- Menggunakan $category->products_count yang dijamin sudah di-refresh di @php atas --}}
                             <p class="text-3xl font-bold text-neon-green">{{ number_format($category->products_count) }}</p>
                         </div>
                         <div>
@@ -46,10 +58,9 @@
                         <p class="text-white mt-1 p-4 border border-gray-700 rounded-lg bg-gray-900/50 min-h-32">{{ $category->description ?: 'No description provided.' }}</p>
                     </div>
 
-                    {{-- PERUBAHAN DI SINI: Tombol Delete dan Back disatukan --}}
                     <div class="mt-8 flex justify-end gap-4"> 
                         
-                        {{-- 1. Tombol Delete (Diposisikan di sini) --}}
+                        {{-- Tombol Delete --}}
                         <form method="POST" action="{{ route(auth()->user()->role . '.categories.destroy', $category) }}"
                             onsubmit="return confirm('WARNING: Deleting this category will remove all associated products links. Continue?');">
                             @csrf
@@ -62,7 +73,7 @@
                             </button>
                         </form>
                         
-                        {{-- 2. Tombol Back --}}
+                        {{-- Tombol Back --}}
                         <a href="{{ route(auth()->user()->role . '.categories.index') }}"
                            class="bg-electric-cyan hover:bg-cyan-600 text-dark-charcoal font-bold py-2 px-4 rounded transition duration-300 shadow-lg">
                             Back to Category List
@@ -71,9 +82,9 @@
                 </div>
             </div>
 
-            ---
+            <hr class="my-8 border-gray-700">
 
-            {{-- PRODUCTS LIST UNDER THIS CATEGORY (Optional) --}}
+            {{-- PRODUCTS LIST UNDER THIS CATEGORY --}}
             <h3 class="text-xl font-bold text-neon-green mb-4 border-b border-gray-700 pb-2 mt-8">Products in This Category</h3>
 
             <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
@@ -86,7 +97,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($products as $product)
+                        @forelse ($products as $product)
                             <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition duration-150">
                                 <th scope="row" class="py-4 px-6 font-medium whitespace-nowrap text-white">
                                     <a href="{{ route(auth()->user()->role . '.products.show', $product) }}" class="text-electric-cyan hover:underline">{{ $product->sku }}</a>
@@ -94,7 +105,13 @@
                                 <td class="py-4 px-6">{{ $product->name }}</td>
                                 <td class="py-4 px-6 text-center">{{ number_format($product->current_stock) }} {{ $product->unit }}</td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr class="bg-gray-800">
+                                <td colspan="3" class="py-4 px-6 text-center text-gray-500">
+                                    No products found in this category.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
