@@ -22,20 +22,7 @@ export default {
                 'neon-red': '#FF3131',      
                 'neon-green': '#39FF14',    
             },
-            keyframes: {
-                'typing-cursor': { 
-                    '0%, 100%': { borderRightColor: 'transparent' },
-                    '50%': { borderRightColor: '#00FFFF' }, 
-                },
-                'text-reveal': { 
-                    '0%': { width: '0' },
-                    '100%': { width: '100%' },
-                }
-            },
-            animation: {
-
-                'type-and-blink': 'text-reveal 1.5s steps(30, end) forwards, typing-cursor 0.5s step-end infinite alternate',
-            },
+           
         },
     },
 

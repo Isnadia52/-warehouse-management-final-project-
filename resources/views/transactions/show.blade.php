@@ -1,9 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-electric-cyan leading-tight">
-            <span class="inline-block overflow-hidden whitespace-nowrap border-r-4 border-electric-cyan animate-type-and-blink">
-                {{ __('TRANSACTION DETAIL: ') . $transaction->transaction_number }}
-            </span>
+            <div id="transactions-header-target" 
+                 class="typing-target" 
+                 data-text="{{ __('TRANSACTION DETAIL: ') . $transaction->transaction_number }}" 
+                 style="min-height: 25px;">
+            </div>
         </h2>
     </x-slot>
 

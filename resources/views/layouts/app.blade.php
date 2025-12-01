@@ -33,6 +33,18 @@
                 inset 0 0 8px rgba(0, 255, 255, 0.5); 
             transition: all 0.3s ease-in-out;
         }
+
+        @keyframes blink {
+            0%, 100% { border-right-color: transparent; }
+            50% { border-right-color: #00FFFF; }
+        }
+        .typing-header {
+            /* Mengatur text agar tidak terbungkus */
+            display: inline-block;
+            /* Cursor Style */
+            border-right: 4px solid #00FFFF;
+            animation: blink 0.7s step-end infinite;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-dark-charcoal text-gray-100">
@@ -60,6 +72,38 @@
           duration: 800,
           once: true,   
       });
+    </script>
+    <script>
+        function initTypingEffect() {
+            // Cari semua elemen dengan class 'typing-target'
+            const elements = document.querySelectorAll('.typing-target');
+            
+            elements.forEach(el => {
+                const fullText = el.getAttribute('data-text');
+                if (!fullText) return; 
+
+                let i = 0;
+                el.textContent = ''; // Kosongkan teks awal
+                el.classList.add('typing-header'); // Tambahkan cursor
+
+                function type() {
+                    if (i < fullText.length) {
+                        el.textContent += fullText.charAt(i);
+                        i++;
+                        setTimeout(type, 50); // Kecepatan ketik (50ms)
+                    } else {
+                        el.classList.remove('typing-header'); // Hapus cursor setelah selesai ketik
+                        el.classList.add('typing-header-done'); // Tambahkan class untuk cursor berkedip di tempat
+                    }
+                }
+
+                // Tambahkan delay kecil sebelum mulai mengetik
+                setTimeout(type, 300);
+            });
+        }
+        
+        // Jalankan fungsi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', initTypingEffect);
     </script>
 </body>
 </html>

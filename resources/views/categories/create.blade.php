@@ -1,11 +1,11 @@
-<!-- File: resources/views/categories/create.blade.php (Koreksi Lengkap) -->
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-electric-cyan leading-tight">
-            <span class="inline-block overflow-hidden whitespace-nowrap border-r-4 border-electric-cyan animate-type-and-blink">
-                {{ __('ENCODE NEW CATEGORY') }}
-            </span>
+            <div id="categories-header-target" 
+                 class="typing-target" 
+                 data-text="{{ __('ENCODE NEW CATEGORY') }}" 
+                 style="min-height: 25px;">
+            </div>
         </h2>
     </x-slot>
 

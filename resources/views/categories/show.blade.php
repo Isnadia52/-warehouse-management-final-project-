@@ -1,9 +1,11 @@
 <x-app-layout>
-    <x-slot name="header">
+<x-slot name="header">
         <h2 class="font-semibold text-xl text-electric-cyan leading-tight">
-            <span class="inline-block overflow-hidden whitespace-nowrap border-r-4 border-electric-cyan animate-type-and-blink">
-                {{ __('CATEGORY DETAIL: ') . $category->name }}
-            </span>
+            <div id="categories-header-target" 
+                 class="typing-target" 
+                 data-text="{{ __('CATEGORY DETAIL: ') . $category->name }}" 
+                 style="min-height: 25px;">
+            </div>
         </h2>
     </x-slot>
 

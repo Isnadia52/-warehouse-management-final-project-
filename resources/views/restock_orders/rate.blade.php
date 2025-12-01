@@ -1,7 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-electric-cyan leading-tight">
-            {{ __('SUBMIT SUPPLIER RATING') }}
+            <div id="restock_orders-target" 
+                 class="typing-target" 
+                 data-text="{{ __('SUBMIT SUPPLIER RATING') }}" 
+                 style="min-height: 25px;">
+            </div>
         </h2>
     </x-slot>
 
